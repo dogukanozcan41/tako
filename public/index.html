@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tako Yönetim Sistemi | Giriş</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="theme-dark">
+    <div class="page page--split">
+      <section class="hero">
+        <div class="hero__overlay"></div>
+        <div class="hero__content">
+          <img src="/assets/logo.svg" alt="Tako" class="hero__logo" />
+          <h1 class="hero__title">Tako Operasyon Platformu</h1>
+          <p class="hero__subtitle">
+            Hasar kayıtlarını, kullanıcı rollerini ve operasyonel süreçleri tek bir
+            profesyonel arayüz üzerinden yönetin.
+          </p>
+        </div>
+      </section>
+      <main class="panel" aria-labelledby="login-title">
+        <form id="login-form" class="form form--card" novalidate>
+          <header class="form__header">
+            <h2 id="login-title">Hesabınıza giriş yapın</h2>
+            <p class="form__hint">
+              Yönetici veya operatör bilgilerinizle giriş yaparak kontrol paneline ulaşın.
+            </p>
+          </header>
+
+          <div class="form__group">
+            <label for="username">Kullanıcı Adı</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              autocomplete="username"
+              placeholder="ornek.kullanici"
+              required
+            />
+          </div>
+
+          <div class="form__group">
+            <label for="password">Parola</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              autocomplete="current-password"
+              placeholder="••••••••"
+              minlength="6"
+              required
+            />
+          </div>
+
+          <div class="form__feedback" role="alert" hidden></div>
+
+          <button type="submit" class="button button--primary">Giriş Yap</button>
+        </form>
+
+        <footer class="panel__footer">
+          <p>
+            Demo için kullanıcı adı <strong>admin</strong> ve parola <strong>admin123</strong>
+            bilgilerini kullanabilirsiniz.
+          </p>
+        </footer>
+      </main>
+    </div>
+
+    <script type="module" src="/js/auth.js"></script>
+  </body>
+</html>
