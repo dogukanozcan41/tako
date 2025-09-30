@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tako Yönetim Sistemi | Kontrol Paneli</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="theme-light">
+    <header class="topbar">
+      <div class="topbar__branding">
+        <img src="/assets/logo.svg" alt="Tako" class="topbar__logo" />
+        <div>
+          <p class="topbar__title">Tako Kontrol Paneli</p>
+          <p class="topbar__subtitle">Operasyon özetleri ve gerçek zamanlı istatistikler</p>
+        </div>
+      </div>
+      <nav class="topbar__actions" aria-label="Kullanıcı menüsü">
+        <span class="topbar__user" id="current-user">-</span>
+        <button id="logout" class="button button--ghost">Çıkış Yap</button>
+      </nav>
+    </header>
+
+    <main class="layout">
+      <section class="card" aria-labelledby="overview-heading">
+        <header class="card__header">
+          <h2 id="overview-heading">Genel Bakış</h2>
+          <p class="card__meta">Canlı veri 15 saniyede bir yenilenir.</p>
+        </header>
+        <div class="grid grid--stats" id="overview"></div>
+      </section>
+
+      <section class="card" aria-labelledby="damage-heading">
+        <header class="card__header">
+          <div>
+            <h2 id="damage-heading">Hasar Kayıtları</h2>
+            <p class="card__meta">Son 10 kayıt listelenir. CSV olarak indirebilirsiniz.</p>
+          </div>
+          <button id="export-damages" class="button button--secondary">CSV Aktar</button>
+        </header>
+        <div class="table" role="region" aria-live="polite">
+          <table>
+            <thead>
+              <tr>
+                <th>Kayıt No</th>
+                <th>Model</th>
+                <th>Durum</th>
+                <th>Aşama</th>
+                <th>Tarih</th>
+              </tr>
+            </thead>
+            <tbody id="damage-rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="activity-heading">
+        <header class="card__header">
+          <h2 id="activity-heading">Aktivite Akışı</h2>
+          <p class="card__meta">Son 20 olay kronolojik sırayla listelenir.</p>
+        </header>
+        <ol class="timeline" id="activity"></ol>
+      </section>
+    </main>
+
+    <template id="stat-template">
+      <article class="stat">
+        <span class="stat__label"></span>
+        <strong class="stat__value"></strong>
+        <span class="stat__delta" aria-hidden="true"></span>
+      </article>
+    </template>
+
+    <template id="activity-template">
+      <li class="timeline__item">
+        <span class="timeline__time"></span>
+        <div>
+          <p class="timeline__title"></p>
+          <p class="timeline__meta"></p>
+        </div>
+      </li>
+    </template>
+
+    <script type="module" src="/js/dashboard.js"></script>
+  </body>
+</html>
