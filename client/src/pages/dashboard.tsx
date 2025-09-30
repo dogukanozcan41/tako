@@ -8,7 +8,7 @@ import DamageTable from "@/components/damage-table";
 import ActionButtons from "@/components/action-buttons";
 import SettingsModal from "@/components/settings-modal";
 import UserManagementModal from "@/components/user-management-modal";
-import { DamageRecord } from "@shared/schema";
+import { DamageRecord, Settings as AppSettings } from "@shared/schema";
 import { logout, getCurrentUser, isAdmin } from "@/lib/auth";
 
 interface FilterState {
@@ -33,11 +33,11 @@ export default function Dashboard() {
   const currentUser = getCurrentUser();
   const userIsAdmin = isAdmin();
 
-  const { data: settings } = useQuery({
+  const { data: settings } = useQuery<AppSettings | null>({
     queryKey: ["/api/settings"],
   });
 
-  const { data: damageRecords = [] } = useQuery({
+  const { data: damageRecords = [] } = useQuery<DamageRecord[]>({
     queryKey: ["/api/damage-records"],
   });
 

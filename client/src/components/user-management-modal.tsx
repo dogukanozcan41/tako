@@ -19,7 +19,7 @@ import { Users, Plus, Edit, Trash2, User, Shield, AlertCircle } from "lucide-rea
 import { apiRequest } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
 
-interface User {
+interface ManagedUser {
   id: number;
   username: string;
   firstName: string;
@@ -43,7 +43,7 @@ interface UserManagementModalProps {
 
 export default function UserManagementModal({ open, onOpenChange }: UserManagementModalProps) {
   const [showUserForm, setShowUserForm] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editingUser, setEditingUser] = useState<ManagedUser | null>(null);
   const [formData, setFormData] = useState<UserFormData>({
     username: '',
     password: '',
@@ -55,19 +55,15 @@ export default function UserManagementModal({ open, onOpenChange }: UserManageme
   
   const queryClient = useQueryClient();
 
-  const { data: users = [], isLoading } = useQuery({
+  const { data: users = [], isLoading } = useQuery<ManagedUser[]>({
     queryKey: ['/api/users'],
     enabled: open,
   });
 
-  const createUserMutation = useMutation({
+  const createUserMutation = useMutation<ManagedUser, Error, UserFormData>({
     mutationFn: async (userData: UserFormData) => {
       const response = await apiRequest('POST', '/api/users', userData);
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Kullanıcı oluşturulamadı');
-      }
-      return response.json();
+      return response.json() as Promise<ManagedUser>;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/users'] });
@@ -82,14 +78,10 @@ export default function UserManagementModal({ open, onOpenChange }: UserManageme
     }
   });
 
-  const updateUserMutation = useMutation({
+  const updateUserMutation = useMutation<ManagedUser, Error, { id: number; userData: Partial<UserFormData> }>({
     mutationFn: async ({ id, userData }: { id: number; userData: Partial<UserFormData> }) => {
       const response = await apiRequest('PUT', `/api/users/${id}`, userData);
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Kullanıcı güncellenemedi');
-      }
-      return response.json();
+      return response.json() as Promise<ManagedUser>;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/users'] });
@@ -104,14 +96,10 @@ export default function UserManagementModal({ open, onOpenChange }: UserManageme
     }
   });
 
-  const deleteUserMutation = useMutation({
+  const deleteUserMutation = useMutation<void, Error, number>({
     mutationFn: async (id: number) => {
       const response = await apiRequest('DELETE', `/api/users/${id}`);
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Kullanıcı silinemedi');
-      }
-      return response.json();
+      await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/users'] });
@@ -148,7 +136,7 @@ export default function UserManagementModal({ open, onOpenChange }: UserManageme
 
     if (editingUser) {
       // Update existing user
-      const updateData = { ...formData };
+      const updateData: Partial<UserFormData> = { ...formData };
       if (!updateData.password) {
         delete updateData.password; // Don't update password if empty
       }
@@ -163,7 +151,7 @@ export default function UserManagementModal({ open, onOpenChange }: UserManageme
     }
   };
 
-  const handleEdit = (user: User) => {
+  const handleEdit = (user: ManagedUser) => {
     setEditingUser(user);
     setFormData({
       username: user.username,
@@ -175,7 +163,7 @@ export default function UserManagementModal({ open, onOpenChange }: UserManageme
     setShowUserForm(true);
   };
 
-  const handleDelete = (user: User) => {
+  const handleDelete = (user: ManagedUser) => {
     if (window.confirm(`${user.firstName} ${user.lastName} kullanıcısını silmek istediğinizden emin misiniz?`)) {
       deleteUserMutation.mutate(user.id);
     }
@@ -219,7 +207,7 @@ export default function UserManagementModal({ open, onOpenChange }: UserManageme
                 <div className="text-center py-4">Kullanıcılar yükleniyor...</div>
               ) : (
                 <div className="grid gap-4">
-                  {users.map((user: User) => (
+                  {users.map((user) => (
                     <Card key={user.id} className="p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">

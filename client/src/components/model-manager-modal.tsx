@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { insertModelSchema, InsertModel } from "@shared/schema";
+import { insertModelSchema, InsertModel, Model } from "@shared/schema";
 
 interface ModelManagerModalProps {
   open: boolean;
@@ -22,7 +22,7 @@ export default function ModelManagerModal({ open, onOpenChange, onModelSelect }:
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: models = [] } = useQuery({
+  const { data: models = [] } = useQuery<Model[]>({
     queryKey: ["/api/models"],
   });
 
@@ -33,10 +33,10 @@ export default function ModelManagerModal({ open, onOpenChange, onModelSelect }:
     },
   });
 
-  const createMutation = useMutation({
+  const createMutation = useMutation<Model, Error, InsertModel>({
     mutationFn: async (data: InsertModel) => {
       const response = await apiRequest("POST", "/api/models", data);
-      return response.json();
+      return response.json() as Promise<Model>;
     },
     onSuccess: (newModel) => {
       queryClient.invalidateQueries({ queryKey: ["/api/models"] });
@@ -58,7 +58,7 @@ export default function ModelManagerModal({ open, onOpenChange, onModelSelect }:
     },
   });
 
-  const deleteMutation = useMutation({
+  const deleteMutation = useMutation<void, Error, number>({
     mutationFn: async (id: number) => {
       await apiRequest("DELETE", `/api/models/${id}`);
     },
@@ -82,7 +82,7 @@ export default function ModelManagerModal({ open, onOpenChange, onModelSelect }:
     createMutation.mutate(data);
   };
 
-  const handleDelete = (model: any) => {
+  const handleDelete = (model: Model) => {
     if (window.confirm(`"${model.name}" modelini silmek istediğinizden emin misiniz?`)) {
       deleteMutation.mutate(model.id);
     }
@@ -133,7 +133,7 @@ export default function ModelManagerModal({ open, onOpenChange, onModelSelect }:
                     Henüz model bulunmamaktadır.
                   </p>
                 ) : (
-                  models.map((model: any) => (
+                  models.map((model) => (
                     <div
                       key={model.id}
                       className="flex items-center justify-between p-3 bg-muted rounded-md"

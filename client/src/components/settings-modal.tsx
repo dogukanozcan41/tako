@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { insertSettingsSchema, InsertSettings } from "@shared/schema";
+import { insertSettingsSchema, InsertSettings, Settings as AppSettings } from "@shared/schema";
 
 interface SettingsModalProps {
   open: boolean;
@@ -28,7 +28,7 @@ export default function SettingsModal({
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: settings } = useQuery({
+  const { data: settings } = useQuery<AppSettings | null>({
     queryKey: ["/api/settings"],
   });
 

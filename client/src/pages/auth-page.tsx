@@ -25,20 +25,43 @@ export default function AuthPage() {
         username,
         password
       });
-      
+
       const data = await response.json();
-      
-      if (response.ok) {
-        localStorage.setItem("auth_token", data.token);
-        localStorage.setItem("current_user", JSON.stringify(data.user));
-        setLocation("/");
-      } else {
-        setError(data.message || "Giriş başarısız");
-      }
+
+      localStorage.setItem("auth_token", data.token);
+      localStorage.setItem("current_user", JSON.stringify(data.user));
+      setLocation("/");
     } catch (error) {
-      setError("Bağlantı hatası. Lütfen tekrar deneyin.");
+      let errorMessage = "Bağlantı hatası. Lütfen tekrar deneyin.";
+
+      if (error instanceof Error) {
+        const bodyText = (() => {
+          const separatorIndex = error.message.indexOf(":");
+          return separatorIndex >= 0
+            ? error.message.slice(separatorIndex + 1).trim()
+            : error.message;
+        })();
+
+        try {
+          const parsed = JSON.parse(bodyText);
+          if (typeof parsed === "string" && parsed.trim()) {
+            errorMessage = parsed;
+          } else if (parsed && typeof parsed === "object" && "message" in parsed) {
+            const parsedMessage = (parsed as { message?: string }).message;
+            if (parsedMessage) {
+              errorMessage = parsedMessage;
+            }
+          }
+        } catch {
+          if (bodyText) {
+            errorMessage = bodyText;
+          }
+        }
+      }
+
+      setError(errorMessage);
     }
-    
+
     setIsLoading(false);
   };
 

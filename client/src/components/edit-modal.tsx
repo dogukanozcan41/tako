@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { updateDamageRecordSchema, DamageRecord } from "@shared/schema";
+import { updateDamageRecordSchema, DamageRecord, Model } from "@shared/schema";
 import { z } from "zod";
 
 interface EditModalProps {
@@ -25,7 +25,7 @@ export default function EditModal({ record, open, onOpenChange }: EditModalProps
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: models = [] } = useQuery({
+  const { data: models = [] } = useQuery<Model[]>({
     queryKey: ["/api/models"],
   });
 
@@ -121,7 +121,7 @@ export default function EditModal({ record, open, onOpenChange }: EditModalProps
                 list="editModelList"
               />
               <datalist id="editModelList">
-                {models.map((model: any) => (
+                {models.map((model) => (
                   <option key={model.id} value={model.name}>
                     {model.name}
                   </option>
